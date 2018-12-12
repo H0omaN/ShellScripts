@@ -1,0 +1,244 @@
+module load gsl/2.3 
+module load netcdf-c/4.4.1.1
+module load netcdf-c++/4-4.3.0
+module load met/8.20
+
+scp z5194283@typhoon.ccrc.unsw.edu.au:/home/z5194283/hdrive/MET_Tutorial/MyData/grid2.txt /home/z5194283/met/MyProject/
+scp z5194283@typhoon.ccrc.unsw.edu.au:/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/MRMS-Regridded/1.nc /home/z5194283/met/MyProject/
+
+
+scp z5194283@typhoon.ccrc.unsw.edu.au:/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/out/mtd_20180914_002959V_3d_pair_cluster.txt /home/z5194283/met/MyProject/
+
+scp z5194283@typhoon.ccrc.unsw.edu.au:/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/MRMS-Regridded/MRMSGC6H2018091400-regridded.nc /home/z5194283/met/MyProject/
+
+scp /home/z5194283/met/MyProject/sample_obs2.nc z5194283@typhoon.ccrc.unsw.edu.au:/home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/
+
+/home/z5194283/met/MyProject
+scp /home/z5194283/met/MyProject/sample_obs2.nc z5194283@typhoon.ccrc.unsw.edu.au:/home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/
+
+scp /home/z5194283/met/8.0/met-8.0/data/config/PlotModeFieldConfig_default z5194283@typhoon.ccrc.unsw.edu.au:/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early
+
+
+scp /home/z5194283/met/MyProject/MRMS_GaugeCorr_QPE_24H_00.00_20181130-000000.grib2 z5194283@typhoon.ccrc.unsw.edu.au:/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early
+
+
+scp -r /home/z5194283/met/MyProject/Sample-Prepared-datat z5194283@typhoon.ccrc.unsw.edu.au:/home/z5194283/hdrive/MET_Tutorial/MyData
+
+
+cd /home/z5194283/hdrive/MET_Tutorial/output
+
+pcp_combine \
+-sum 20050807_000000 3 20050808_000000 12 \
+$/home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/sample_fcst_24L_2005080800V_12A.nc \
+-pcpdir $/home/z5194283/hdrive/MET_Tutorial/input/sample_fcst/2005080700
+
+pcp_combine \
+-sum 20050807_000000 3 20050808_000000 24 \
+$/home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/sample_fcst_24L_2005080800V_12A.nc \
+-pcpdir $/home/z5194283/hdrive/MET_Tutorial/input/sample_fcst/2005080700
+
+
+pcp_combine -sum \
+20180914_000000 6 \
+20180915_000000 24 \
+Daily.nc \
+-pcpdir /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early
+
+pcp_combine -sum \
+00000000_000000 1 \
+20050808_000000 24 \
+sample_obs.nc \
+-pcpdir /home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml
+
+ncview /home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/sample_fcst.nc &
+ncdump -h /home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/sample_fcst.nc
+
+
+pb2nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/prepbufr/ndas.t00z.prepbufr.tm12.20070401.nr \
+/home/z5194283/hdrive/MET_Tutorial/output/pb2nc/tutorial_pb.nc \
+/home/z5194283/hdrive/MET_Tutorial/config/PB2NCConfig_default \
+-v 2
+
+ascii2nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ascii/sample_ascii_obs.txt \
+/home/z5194283/hdrive/MET_Tutorial/output/ascii2nc/tutorial_ascii.nc \
+-v 2
+
+
+ascii2nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ascii/precip24_2010010112.ascii \
+/home/z5194283/hdrive/MET_Tutorial/output/ascii2nc/precip24_2010010112.nc \
+-v 2
+
+ncview /home/z5194283/hdrive/MET_Tutorial/output/ascii2nc/tutorial_ascii.nc
+
+madis2nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/madis/metar/metar_2012040912_F000.nc \
+/home/z5194283/hdrive/MET_Tutorial/output/madis2nc/metar_2012040912_F000.nc \
+-type metar -rec_beg 2000 -rec_end 6000 -v 2
+
+lidar2nc \  ====> NOT FOUND: ERROR !
+/home/z5194283/hdrive/MET_Tutorial/input/lidar_data/CAL_LID_L2_05kmCLay-Prov-V3-40.2016-12-01T01-24-58ZN.hdf \
+-out /home/z5194283/hdrive/MET_Tutorial/output/lidar2nc/CAL_LID_L2_05kmCLay-Prov-V3-40.2016-12-01T01-24-58ZN.nc 
+
+point_stat \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_fcst/2007033000/nam.t00z.awip1236.tm00.20070330.grb \
+/home/z5194283/hdrive/MET_Tutorial/output/pb2nc/tutorial_pb.nc \
+/home/z5194283/hdrive/MET_Tutorial/config/PointStatConfig \
+-outdir /home/z5194283/hdrive/MET_Tutorial/output/point_stat \
+-v 2
+
+Results:
+DEBUG 1: Output file: /home/z5194283/hdrive/MET_Tutorial/output/point_stat/point_stat_360000L_20070331_120000V.stat
+DEBUG 1: Output file: /home/z5194283/hdrive/MET_Tutorial/output/point_stat/point_stat_360000L_20070331_120000V_ctc.txt
+DEBUG 1: Output file: /home/z5194283/hdrive/MET_Tutorial/output/point_stat/point_stat_360000L_20070331_120000V_cts.txt
+DEBUG 1: Output file: /home/z5194283/hdrive/MET_Tutorial/output/point_stat/point_stat_360000L_20070331_120000V_mctc.txt
+DEBUG 1: Output file: /home/z5194283/hdrive/MET_Tutorial/output/point_stat/point_stat_360000L_20070331_120000V_mcts.txt
+DEBUG 1: Output file: /home/z5194283/hdrive/MET_Tutorial/output/point_stat/point_stat_360000L_20070331_120000V_cnt.txt
+DEBUG 1: Output file: /home/z5194283/hdrive/MET_Tutorial/output/point_stat/point_stat_360000L_20070331_120000V_sl1l2.txt
+DEBUG 1: Output file: /home/z5194283/hdrive/MET_Tutorial/output/point_stat/point_stat_360000L_20070331_120000V_vl1l2.txt
+
+
+
+mode \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/sample.nc \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/obs.nc \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/config \
+-outdir /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/myoutput \
+-v 2
+
+
+mode \
+/home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/sample_obs2.nc \
+/home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/sample_obs2.nc \
+/home/z5194283/hdrive/MET_Tutorial/config/MODEConfig_default \
+-outdir /home/z5194283/hdrive/MET_Tutorial/output/mode/myoutput/1 \
+-v 2
+
+mode \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/140000.nc \
+/home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/sample_obs2.nc \
+/home/z5194283/hdrive/MET_Tutorial/config/MODEConfig_default \
+-outdir /home/z5194283/hdrive/MET_Tutorial/output/mode/myoutput \
+-v 2
+
+
+evince mode_000000L_19700101_000000V_NAA.ps
+
+mode \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/MRMS_GaugeCorr_QPE_24H_00.00_20181130-000000.grib2 \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/MRMS_GaugeCorr_QPE_24H_00.00_20181130-000000.grib2 \
+/home/z5194283/hdrive/MET_Tutorial/config/MODEConfig_default \
+-outdir /home/z5194283/hdrive/MET_Tutorial/output/mode/myoutput \
+-v 2
+
+mode \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/DailyIMERGCov.nc \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/DailyIMERGCov.nc \
+/home/z5194283/hdrive/MET_Tutorial/config/MODEConfig_default \
+-outdir /home/z5194283/hdrive/MET_Tutorial/output/mode/myoutput \
+-v 2
+
+
+mode \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/MRMS-Regridded/1.nc \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/MRMS-Regridded/1.nc \
+/home/z5194283/hdrive/MET_Tutorial/config/MODEConfig_default \
+-outdir /home/z5194283/hdrive/MET_Tutorial/output/mode/myoutput \
+-v 2
+
+ncrename -v GaugeCorrQPE06H_0mabovemeansealevel,precipitationCal MRMSGC6H2018091400-regridded.nc
+ncrename -v APCP_24,precipitationCal sample_obs2.nc
+
+ncks -4 140000.nc 140000new.nc
+
+
+clonning IMERG data into Sample data:
+
+cdo griddes /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/140000.nc > /home/z5194283/hdrive/MET_Tutorial/MyData/grid.txt
+
+cdo remapbil,/home/z5194283/hdrive/MET_Tutorial/MyData/grid.txt /home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/sample_fcst.nc /home/z5194283/hdrive/MET_Tutorial/MyData/Motherfile.nc
+
+
+cdo griddes /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/MRMS-Regridded/MRMSGC6H2018091400-regridded.nc > /home/z5194283/hdrive/MET_Tutorial/MyData/grid2.txt
+
+
+regrid_data_plane \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/140000.nc \
+/home/z5194283/hdrive/MET_Tutorial/MyData/gridcopy.txt \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/140000regrided.nc \
+-field 'name="precipitationCal"; level="(*,*)";' 
+
+ncremap -d /home/z5194283/hdrive/MET_Tutorial/output/pcp_combine/sample_obs.nc /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/140000.nc /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/140000ncregrid.nc
+
+/home/z5194283/hdrive/MET_Tutorial/MyData/grid2.txt
+
+
+scp z5194283@typhoon.ccrc.unsw.edu.au:/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/140000ncregrid.nc /home/z5194283/met/MyProject/
+
+regrid_data_plane \
+MRMS_GaugeCorr_QPE_24H_00.00_20181130-000000.grib2 \
+G212 \
+regrid_data_plane_GOES-16_AOD_TO_G212.nc \
+-field 'name="precipitationCal"; level="(*,*)";' 
+
+cdo setgatts,att.txt DailyIMERG.nc DailyIMERGCov.nc
+
+cdo setgatts,/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/att.txt DailyIMERG.nc DailyIMERGCov.nc
+
+cdo setgatt,myatt,myattntnts ifile ofile
+ncatted -c -a Projection,global,a,a,"LatLon" 3B-DAY-L.MS.MRG.3IMERG.20180914-S000000-E235959.V05.nc4.nc Newadded1.nc
+
+cdo outputtab,min(lon) MRMSGC6H2018091400-regridded.nc
+cdo info MRMSGC6H2018091400-regridded.nc
+cdo -v fldmax MRMSGC6H2018091400-regridded.nc
+
+cdo addc,-273.15 ifile ofile
+
+mtd \
+-fcst /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/140600.nc \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/141200.nc \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/141800.nc \
+-obs /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/MRMSGC6H2018091406-regridded.nc \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/MRMSGC6H2018091412-regridded.nc \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/MRMSGC6H2018091418-regridded.nc \
+-outdir /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/out \
+-config /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/MTDConfig_default \
+-v 2
+
+mtd \
+-fcst /home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080703V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080706V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080709V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080712V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080715V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080718V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080721V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080724V_03A.nc \
+-obs /home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080703V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080706V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080709V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080712V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080715V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080718V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080721V_03A.nc \
+/home/z5194283/hdrive/MET_Tutorial/input/sample_obs/ST2ml_3h/sample_obs_2005080724V_03A.nc \
+-config /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/MTDConfig_default \
+-outdir /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/out \
+-v 2
+
+
+
+-fcst /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/*.nc \
+-obs /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/*.nc \
+-outdir /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/out \
+-config /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/MTDConfig_default \
+-v 2
+
+
+plot_mode_field \
+-simple -obs \
+-config /home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/PlotModeFieldConfig_tutorial \
+/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/myoutput/mode_000000L_19700101_000000V_NAA_obj.nc
+
