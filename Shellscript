@@ -1,0 +1,190 @@
+var1=4
+var2=3
+let var3=$var1+$var2
+echo $var3
+
+
+chmod +x myscript.sh
+./myscript.sh
+
+
+#import libraries
+from cdo import Cdo
+cdo = Cdo()
+
+cdo.zonmean(input=<ifile>, output=<ofile>, options = '-a -f nc')
+# corresponding cdo command in the terminal:
+# cdo -a -f nc zonmean ifile ofile
+
+
+NCL:
+  f = (/2.1, 3.2, 4.3, 5.4, 6.5, 7.6, 8.7, 9.8/)
+  min_f = min(f)
+  print(min_f)        ; Should be 2.1
+  printVarSummary(lat2d)
+  
+  module load ncl/6.4.0
+  ncl
+  f = addfile("/home/z5194283/hdrive/MET_Tutorial/MyData/Sample-Prepared-datat/IMERG-Early/samplemtdrun/MRMSGC6H2018091418-regridded.nc" , "w")
+  lat2d = f->lat(:)
+  lon2d = f->lon(:)  
+  lat_ll=min(lat2d)
+  lon_ll=min(lon2d)
+  nlat  = dimsizes(lat2d)
+  nlon  = dimsizes(lon2d)
+  ngrid = nlat*nlon    
+  f@Projection = "LatLon"  
+  strs = (/tostring(lat_ll)," degrees_north"/)
+  str = str_concat(strs)
+  f@lat_ll = str
+  strs = (/tostring(lon_ll)," degrees_east"/)
+  str = str_concat(strs)  
+  f@lon_ll = str  
+  f@delta_lat = "0.100000 degrees"
+  f@delta_lon = "0.100000 degrees"
+  strs = (/tostring(nlat)," grid_points"/)
+  str = str_concat(strs)    
+  f@Nlat = str  
+  strs = (/tostring(nlon)," grid_points"/)
+  str = str_concat(strs)
+  f@Nlon = str  
+  quit 
+  
+  f@fileheader(3)
+  
+  ncl
+  f     = addfile("sample.nc" , "w")
+  Val = f->precipitationCal(:,:)
+  f->precipitationCal(:,:) = Val*6
+  
+  ncl
+  f     = addfile("sample.nc" , "w")  
+  f->precipitationCal@units="mm"
+  f->precipitationCal@Units="mm"
+  quit
+  
+  
+  
+  
+  
+  module load ncl/6.4.0
+  ncl
+  f=addfile("141800.nc","r")
+  g=addfile("MRMSGC6H2018091418-regridded.nc","w")
+  FileHeader=f@FileHeader  
+  
+  i=str_index_of_substr(FileHeader,"StartGranuleDateTime=",1)  
+  styear = stringtointeger(str_get_cols(FileHeader, i+21, i+24))
+  stmonth = stringtointeger(str_get_cols(FileHeader, i+26, i+27))
+  stday = stringtointeger(str_get_cols(FileHeader, i+29, i+30))
+  sthour = stringtointeger(str_get_cols(FileHeader, i+32, i+33))
+  stmin = stringtointeger(str_get_cols(FileHeader, i+35, i+36))
+  stsec = stringtointeger(str_get_cols(FileHeader, i+38, i+39))
+  
+  j=str_index_of_substr(FileHeader,"StopGranuleDateTime=",1) 
+  enyear = stringtointeger(str_get_cols(FileHeader, j+20, j+23))
+  enmonth = stringtointeger(str_get_cols(FileHeader, j+25, j+26))
+  enday = stringtointeger(str_get_cols(FileHeader, j+28, j+29))
+  enhour = stringtointeger(str_get_cols(FileHeader, j+31, j+32))
+  enmin = stringtointeger(str_get_cols(FileHeader, j+34, j+35))
+  ensec = stringtointeger(str_get_cols(FileHeader, j+37, j+38))
+  
+  
+  tstyear = str_get_cols(FileHeader, i+21, i+24)
+  tstmonth = str_get_cols(FileHeader, i+26, i+27)
+  tstday = str_get_cols(FileHeader, i+29, i+30)
+  tsthour = str_get_cols(FileHeader, i+32, i+33)
+  tstmin = str_get_cols(FileHeader, i+35, i+36)
+  tstsec = str_get_cols(FileHeader, i+38, i+39) 
+   
+  tenyear = str_get_cols(FileHeader, j+20, j+23)
+  tenmonth = str_get_cols(FileHeader, j+25, j+26)
+  tenday = str_get_cols(FileHeader, j+28, j+29)
+  tenhour = str_get_cols(FileHeader, j+31, j+32)
+  tenmin = str_get_cols(FileHeader, j+34, j+35)
+  tensec = str_get_cols(FileHeader, j+37, j+38)
+  
+  init_time_ut = ut_inv_calendar( styear, stmonth, stday, sthour, stmin, stsec,  "seconds since 1970-01-01 00:00", 0 )
+  valid_time_ut = ut_inv_calendar( enyear, enmonth, enday, enhour, enmin, ensec,  "seconds since 1970-01-01 00:00", 0 )
+  
+  initim = (/tstyear, tstmonth, tstday,"_", tsthour, tstmin, tstsec/)
+  initime = str_concat(initim)
+  validtim = (/tenyear, tenmonth, tenday,"_", tenhour, tenmin, tensec/)
+  validtime = str_concat(validtim) 
+  
+  delete(g->GaugeCorrQPE06H_0mabovemeansealevel@init_time)
+  delete(g->GaugeCorrQPE06H_0mabovemeansealevel@init_time_ut)
+  delete(g->GaugeCorrQPE06H_0mabovemeansealevel@valid_time)
+  delete(g->GaugeCorrQPE06H_0mabovemeansealevel@valid_time_ut)
+  delete(g->GaugeCorrQPE06H_0mabovemeansealevel@accum_time)
+  delete(g->GaugeCorrQPE06H_0mabovemeansealevel@accum_time_sec)
+  
+  g->GaugeCorrQPE06H_0mabovemeansealevel@init_time=initime
+  g->GaugeCorrQPE06H_0mabovemeansealevel@init_time_ut=tostring(tointeger(init_time_ut))
+  g->GaugeCorrQPE06H_0mabovemeansealevel@valid_time=validtime
+  g->GaugeCorrQPE06H_0mabovemeansealevel@valid_time_ut=tostring(tointeger(valid_time_ut))
+  g->GaugeCorrQPE06H_0mabovemeansealevel@accum_time="060000"
+  g->GaugeCorrQPE06H_0mabovemeansealevel@accum_time_sec=21600  
+  quit
+
+  
+  
+  
+  
+  
+  
+  init_time = "20050807_000000" ;
+  init_time_ut = "1123372800" ;
+  valid_time = "20050808_000000" ;
+  valid_time_ut = "1123459200" ;
+  accum_time = "240000" ;
+  accum_time_sec = 86400 ;
+
+  
+  
+  
+  
+  
+  substr =str_get_cols(FileHeader, i+21, i+43)
+  fomrat = "2018-09-14T05:08:31.000"
+  format = "%Y-%N-%DT%H:%M:%S.000"
+  time = cd_inv_string(substr, format)
+  print(time) 
+  2018-09-14T05:08:31.000Z;\n  
+  print(styear)
+  print(stmonth)
+  print(stday)
+  print(sthour)
+  print(stmin)
+  print(stsec)
+  print(enyear)  
+  print(enmonth)
+  print(enmin)    
+  format = "%N/%Y"
+  stime  = ut_string(time,format)
+  print(i)  
+  print(starttime)quit 
+  endtime
+  
+  
+  time_seconds = ut_inv_calendar( 2000, 01, 01, 00, 00, 00,  "seconds since 1970-01-01 00:00", 0 )
+  print( time_hours )
+  time_days = ut_convert( time_hours, "days since 1800-01-01 00:00" )
+  print( time_days )
+  
+  
+  shopt -s nullglob
+  for i in *PrecipRate*; do
+   filename="${i%.*}"
+   newfile="/home/z5194283/hdrive/MET_Tutorial/MyData/RealData/MRMS-NC/$filename.nc"
+   newerfile="/home/z5194283/hdrive/MET_Tutorial/MyData/RealData/MRMS-NC/$filename-compressed-l5.nc"
+   wgrib2 $i -netcdf $newfile
+   nccopy -d5 $newfile $newerfile
+   rm $newfile
+  done
+  
+  wgrib2 MRMS_PrecipRate_00.00_20180916-205600.grib2 -netcdf /home/z5194283/hdrive/MET_Tutorial/MyData/RealData/MRMS-NC/1.nc
+  ncview /home/z5194283/hdrive/MET_Tutorial/MyData/RealData/MRMS-NC/1.nc
+  rm /home/z5194283/hdrive/MET_Tutorial/MyData/RealData/MRMS-NC/1.nc
+
+  
